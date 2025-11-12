@@ -1,9 +1,34 @@
-
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const AboutSection: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    const currentRef = sectionRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
   return (
-    <section className="py-24 bg-gray-900/50">
+    <section ref={sectionRef} className={`py-24 bg-gray-900/50 animate-on-scroll ${isVisible ? 'is-visible' : ''}`}>
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-5 gap-12 items-center">
           <div className="md:col-span-2">

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -23,7 +22,9 @@
             },
             animation: {
               'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-              'subtle-glow': 'subtleGlow 3s ease-in-out infinite alternate',
+              'subtle-glow': 'subtleGlow 4s ease-in-out infinite alternate',
+              'gradient-move': 'gradientMove 15s ease infinite',
+              'blink': 'blink 1s step-end infinite',
             },
             keyframes: {
               fadeInUp: {
@@ -31,8 +32,16 @@
                 '100%': { opacity: '1', transform: 'translateY(0)' },
               },
               subtleGlow: {
-                '0%': { boxShadow: '0 0 20px 5px rgba(34, 211, 238, 0.1), 0 0 30px 10px rgba(139, 92, 246, 0.05)' },
-                '100%': { boxShadow: '0 0 20px 5px rgba(34, 211, 238, 0.15), 0 0 35px 15px rgba(139, 92, 246, 0.1)' },
+                '0%': { boxShadow: '0 0 25px 5px rgba(34, 211, 238, 0.1), 0 0 35px 10px rgba(139, 92, 246, 0.05)' },
+                '100%': { boxShadow: '0 0 30px 10px rgba(34, 211, 238, 0.2), 0 0 45px 20px rgba(139, 92, 246, 0.15)' },
+              },
+              gradientMove: {
+                '0%, 100%': { backgroundPosition: '0% 50%' },
+                '50%': { backgroundPosition: '100% 50%' },
+              },
+              blink: {
+                'from, to': { opacity: 1 },
+                '50%': { opacity: 0 },
               }
             }
           }
@@ -40,20 +49,22 @@
       }
     </script>
     <style>
-      /* For smooth scrolling */
       html {
         scroll-behavior: smooth;
       }
       body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        cursor: none;
       }
-      /* Custom scrollbar for a modern look */
+      a, button, input[type="submit"] {
+        cursor: none;
+      }
       ::-webkit-scrollbar {
         width: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #111827; 
+        background: #030712; 
       }
       ::-webkit-scrollbar-thumb {
         background: #4f46e5;
@@ -61,6 +72,52 @@
       }
       ::-webkit-scrollbar-thumb:hover {
         background: #6366f1;
+      }
+      .cursor-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #22d3ee;
+        border-radius: 50%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        mix-blend-mode: screen;
+        transition: transform 0.15s ease-out;
+      }
+      .cursor-outline {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #22d3ee;
+        border-radius: 50%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        opacity: 0.5;
+        transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+      }
+      .link-hovered .cursor-outline {
+        width: 60px;
+        height: 60px;
+        border-color: #8b5cf6;
+      }
+      .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .animate-on-scroll.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .typing-cursor::after {
+        content: '|';
+        animation: blink 1s step-end infinite;
       }
     </style>
   <script type="importmap">

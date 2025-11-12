@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { Project } from '../types';
 
 const projects: Project[] = [
@@ -35,9 +34,9 @@ const projects: Project[] = [
 
 const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
   return (
-    <a href={project.link} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-lg">
-      <div className="relative bg-gray-800 border border-gray-700/50 rounded-lg p-1 transition-all duration-300 group-hover:border-brand-cyan/50 group-hover:scale-105 group-hover:shadow-2xl group-hover:shadow-brand-cyan/20">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-violet/20 to-brand-cyan/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <a href={project.link} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-lg relative">
+       <div className="absolute -inset-px bg-gradient-to-r from-brand-cyan to-brand-violet rounded-lg opacity-0 group-hover:opacity-70 transition-opacity duration-300 blur-md"></div>
+      <div className="relative bg-gray-800 border border-gray-700/50 rounded-lg p-1 transition-all duration-300 group-hover:scale-[1.03] group-hover:bg-gray-800/80 backdrop-blur-sm">
         <img src={project.imageUrl} alt={project.title} className="w-full h-48 object-cover rounded-md" />
         <div className="p-4 relative">
           <h3 className="text-xl font-bold text-white">{project.title}</h3>
@@ -49,6 +48,10 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
               </span>
             ))}
           </div>
+           <div className="mt-4 text-brand-cyan font-semibold flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            View Project
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+          </div>
         </div>
       </div>
     </a>
@@ -57,8 +60,34 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
 
 
 const ProjectsSection: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = sectionRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
   return (
-    <section className="py-24 bg-gray-900">
+    <section ref={sectionRef} className={`py-24 bg-gray-900 animate-on-scroll ${isVisible ? 'is-visible' : ''}`}>
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-white">My Projects</h2>
